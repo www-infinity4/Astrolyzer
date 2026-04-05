@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astrolyzer – Cosmic Keyboard Synthesizer</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+<!-- Background starfield -->
+<canvas id="starfield"></canvas>
+
+<div id="app">
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header>
+    <h1>✨ Astrolyzer</h1>
+    <p>Tap any key · 6 preset tunes per key · AI composer turns keystrokes into real music</p>
+  </header>
+
+  <!-- ── Frequency spectrum visualizer ─────────────────── -->
+  <div id="visualizer-wrap">
+    <canvas id="visualizer"></canvas>
+  </div>
+
+  <!-- ── Composer status ────────────────────────────────── -->
+  <div id="composer-status">
+    <div class="dot" id="composer-dot"></div>
+    <span id="composer-label">AI Composer listening…</span>
+  </div>
+
+  <!-- ── Preset selector (6 presets) ───────────────────── -->
+  <div id="presets" role="group" aria-label="Sound presets">
+    <!-- injected by main.js -->
+  </div>
+
+  <!-- ── Token bar ──────────────────────────────────────── -->
+  <div id="token-bar">
+    <span>Tokens:</span>
+    <span id="token-count">0</span>
+    <progress id="token-progress" max="16" value="0"></progress>
+    <span id="tempo-label">♩ — BPM</span>
+  </div>
+
+  <!-- ── Virtual keyboard ───────────────────────────────── -->
+  <div id="keyboard-wrap" aria-label="Virtual keyboard">
+    <!-- Row 1: number row -->
+    <div class="kb-row" id="row-num"></div>
+    <!-- Row 2: QWERTY -->
+    <div class="kb-row" id="row-q"></div>
+    <!-- Row 3: ASDF -->
+    <div class="kb-row" id="row-a"></div>
+    <!-- Row 4: ZXCV -->
+    <div class="kb-row" id="row-z"></div>
+    <!-- Row 5: space -->
+    <div class="kb-row" id="row-space"></div>
+  </div>
+
+  <!-- ── Song / token display ───────────────────────────── -->
+  <div id="song-display" aria-live="polite" aria-label="Song tokens"></div>
+
+  <!-- ── Controls ───────────────────────────────────────── -->
+  <div id="controls">
+    <button class="ctrl-btn primary" id="btn-compose">🎵 Compose Now</button>
+    <button class="ctrl-btn" id="btn-record">⏺ Record</button>
+    <button class="ctrl-btn danger" id="btn-reset">↺ Reset</button>
+  </div>
+
+  <!-- ── Knobs ──────────────────────────────────────────── -->
+  <div id="knobs">
+    <div class="knob-group">
+      <label for="vol-slider">Volume</label>
+      <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="0.75" />
+    </div>
+    <div class="knob-group">
+      <label for="reverb-slider">Reverb</label>
+      <input type="range" id="reverb-slider" min="0" max="1" step="0.01" value="0.5" />
+    </div>
+  </div>
+
+  <footer>
+    Press <kbd>1</kbd>–<kbd>6</kbd> to switch presets &nbsp;|&nbsp;
+    Tap any key to play &nbsp;|&nbsp;
+    AI composer activates automatically ✨
+  </footer>
+
+</div><!-- /#app -->
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
