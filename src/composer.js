@@ -13,12 +13,14 @@
  *   • Syncs accompaniment to the user's average rhythmic tempo.
  *   • Adds dynamic variation: softer accompaniment when user plays fast,
  *     fuller chords during slower passages.
+ *
+ * Depends on: keyboard.js, synthesizer.js (loaded first via <script> tags).
+ * Exposes everything on window.Astrolyzer.
  */
 
 'use strict';
 
-import { NOTE_FREQ } from './keyboard.js';
-import { playNote } from './synthesizer.js';
+window.Astrolyzer = window.Astrolyzer || {};
 
 /* ── Music theory constants ──────────────────────────────────────────── */
 
@@ -69,7 +71,7 @@ function semiToNote(semi, octave) {
 
 /** Find the frequency of a note name, or 0 if not found. */
 function freq(noteName) {
-  return NOTE_FREQ[noteName] ?? 0;
+  return (window.Astrolyzer.NOTE_FREQ[noteName]) ?? 0;
 }
 
 /* ── Composer state ──────────────────────────────────────────────────── */
@@ -204,6 +206,8 @@ async function _playAccompaniment(root, scale, progression, tempo) {
   }
 
   // Play chords (using Pad preset for lush accompaniment)
+  const PRESETS     = window.Astrolyzer.PRESETS;
+  const playNote    = window.Astrolyzer.playNote;
   const padPreset   = PRESETS[5];
   const synthPreset = PRESETS[2];
 
@@ -240,4 +244,5 @@ function _sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export { token, reset, onCompose, onComposerStop };
+// Expose on global namespace
+Object.assign(window.Astrolyzer, { composerToken: token, composerReset: reset, onCompose, onComposerStop });

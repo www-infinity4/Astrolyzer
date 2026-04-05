@@ -8,11 +8,14 @@
  *
  * Both loops receive burst signals when a key is pressed so they can react
  * to user interaction.
+ *
+ * Depends on: synthesizer.js (loaded first via <script> tag).
+ * Exposes everything on window.Astrolyzer.
  */
 
 'use strict';
 
-import { getAnalyser } from './synthesizer.js';
+window.Astrolyzer = window.Astrolyzer || {};
 
 /* ── Starfield ───────────────────────────────────────────────────────── */
 
@@ -142,7 +145,7 @@ function visPulse() {
 function _animateVis() {
   requestAnimationFrame(_animateVis);
   const ctx     = _visCtx;
-  const analyser = getAnalyser();
+  const analyser = window.Astrolyzer.getAnalyser();
 
   const W = _visCanvas.width;
   const H = _visCanvas.height;
@@ -205,4 +208,5 @@ function _animateVis() {
   ctx.globalAlpha = 1;
 }
 
-export { initStarfield, initVisualizer, starBurst, visPulse };
+// Expose on global namespace
+Object.assign(window.Astrolyzer, { initStarfield, initVisualizer, starBurst, visPulse });

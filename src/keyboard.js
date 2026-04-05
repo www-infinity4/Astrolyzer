@@ -2,11 +2,14 @@
  * keyboard.js – Key-to-note mapping and 6 preset tune definitions.
  *
  * Each physical key maps to a musical note. Six sound presets are available
- * (switchable with keys 1-6 or the preset buttons). The module exposes the
- * KEY_MAP, PRESETS array, and the active-key DOM helpers used by the main app.
+ * (switchable with keys 1-6 or the preset buttons). All definitions are
+ * placed on the global `Astrolyzer` namespace so no ES-module bundler is
+ * required – the file works directly from file:// and any HTTP server.
  */
 
 'use strict';
+
+window.Astrolyzer = window.Astrolyzer || {};
 
 /* ── Musical note frequencies (Hz) ─────────────────────────────────────── */
 const NOTE_FREQ = {
@@ -216,4 +219,5 @@ function keyEntry(key) {
   return entry ?? null;
 }
 
-export { KEY_MAP, PRESETS, NOTE_FREQ, noteFreq, keyEntry };
+// Expose on global namespace
+Object.assign(window.Astrolyzer, { KEY_MAP, PRESETS, NOTE_FREQ, noteFreq, keyEntry });

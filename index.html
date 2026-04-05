@@ -30,9 +30,14 @@
     <span id="composer-label">AI Composer listening…</span>
   </div>
 
-  <!-- ── Preset selector (6 presets) ───────────────────── -->
+  <!-- ── Preset selector – 6 presets, one per sound timbre ─────────── -->
   <div id="presets" role="group" aria-label="Sound presets">
-    <!-- injected by main.js -->
+    <button class="preset-btn selected" data-idx="0" style="--preset-color:#7b2fff">1  ✨ Cosmic</button>
+    <button class="preset-btn" data-idx="1" style="--preset-color:#c8c8ff">2  🎹 Piano</button>
+    <button class="preset-btn" data-idx="2" style="--preset-color:#ff4ecd">3  🎸 Synth Lead</button>
+    <button class="preset-btn" data-idx="3" style="--preset-color:#ffb347">4  🎻 Strings</button>
+    <button class="preset-btn" data-idx="4" style="--preset-color:#ffd700">5  🎺 Brass</button>
+    <button class="preset-btn" data-idx="5" style="--preset-color:#00e5ff">6  🌊 Pad</button>
   </div>
 
   <!-- ── Token bar ──────────────────────────────────────── -->
@@ -43,19 +48,77 @@
     <span id="tempo-label">♩ — BPM</span>
   </div>
 
-  <!-- ── Virtual keyboard ───────────────────────────────── -->
+  <!-- ── Virtual keyboard (pre-rendered; JS adds audio behaviour) ───── -->
   <div id="keyboard-wrap" aria-label="Virtual keyboard">
-    <!-- Row 1: number row -->
-    <div class="kb-row" id="row-num"></div>
-    <!-- Row 2: QWERTY -->
-    <div class="kb-row" id="row-q"></div>
-    <!-- Row 3: ASDF -->
-    <div class="kb-row" id="row-a"></div>
-    <!-- Row 4: ZXCV -->
-    <div class="kb-row" id="row-z"></div>
-    <!-- Row 5: space -->
-    <div class="kb-row" id="row-space"></div>
-  </div>
+
+    <!-- Number row -->
+    <div class="kb-row">
+      <div class="key" data-key="`"><span class="kb-label">`</span><span class="note-label">C2</span></div>
+      <div class="key" data-key="1"><span class="kb-label">1</span><span class="note-label">–</span></div>
+      <div class="key" data-key="2"><span class="kb-label">2</span><span class="note-label">–</span></div>
+      <div class="key" data-key="3"><span class="kb-label">3</span><span class="note-label">–</span></div>
+      <div class="key" data-key="4"><span class="kb-label">4</span><span class="note-label">–</span></div>
+      <div class="key" data-key="5"><span class="kb-label">5</span><span class="note-label">–</span></div>
+      <div class="key" data-key="6"><span class="kb-label">6</span><span class="note-label">–</span></div>
+      <div class="key" data-key="7"><span class="kb-label">7</span><span class="note-label">–</span></div>
+      <div class="key" data-key="8"><span class="kb-label">8</span><span class="note-label">–</span></div>
+      <div class="key" data-key="9"><span class="kb-label">9</span><span class="note-label">–</span></div>
+      <div class="key" data-key="0"><span class="kb-label">0</span><span class="note-label">–</span></div>
+      <div class="key" data-key="-"><span class="kb-label">-</span><span class="note-label">A6</span></div>
+      <div class="key" data-key="="><span class="kb-label">=</span><span class="note-label">G6</span></div>
+    </div>
+
+    <!-- Q row -->
+    <div class="kb-row">
+      <div class="key" data-key="q"><span class="kb-label">Q</span><span class="note-label">F5</span></div>
+      <div class="key" data-key="w"><span class="kb-label">W</span><span class="note-label">G5</span></div>
+      <div class="key" data-key="e"><span class="kb-label">E</span><span class="note-label">A5</span></div>
+      <div class="key" data-key="r"><span class="kb-label">R</span><span class="note-label">B5</span></div>
+      <div class="key" data-key="t"><span class="kb-label">T</span><span class="note-label">C6</span></div>
+      <div class="key" data-key="y"><span class="kb-label">Y</span><span class="note-label">D6</span></div>
+      <div class="key" data-key="u"><span class="kb-label">U</span><span class="note-label">E6</span></div>
+      <div class="key" data-key="i"><span class="kb-label">I</span><span class="note-label">F6</span></div>
+      <div class="key" data-key="o"><span class="kb-label">O</span><span class="note-label">G6</span></div>
+      <div class="key" data-key="p"><span class="kb-label">P</span><span class="note-label">A6</span></div>
+      <div class="key" data-key="["><span class="kb-label">[</span><span class="note-label">B5</span></div>
+      <div class="key" data-key="]"><span class="kb-label">]</span><span class="note-label">C6</span></div>
+    </div>
+
+    <!-- A row -->
+    <div class="kb-row">
+      <div class="key" data-key="a"><span class="kb-label">A</span><span class="note-label">A3</span></div>
+      <div class="key" data-key="s"><span class="kb-label">S</span><span class="note-label">B3</span></div>
+      <div class="key" data-key="d"><span class="kb-label">D</span><span class="note-label">C4</span></div>
+      <div class="key" data-key="f"><span class="kb-label">F</span><span class="note-label">D4</span></div>
+      <div class="key" data-key="g"><span class="kb-label">G</span><span class="note-label">E4</span></div>
+      <div class="key" data-key="h"><span class="kb-label">H</span><span class="note-label">F4</span></div>
+      <div class="key" data-key="j"><span class="kb-label">J</span><span class="note-label">G4</span></div>
+      <div class="key" data-key="k"><span class="kb-label">K</span><span class="note-label">A4</span></div>
+      <div class="key" data-key="l"><span class="kb-label">L</span><span class="note-label">B4</span></div>
+      <div class="key" data-key=";"><span class="kb-label">;</span><span class="note-label">C5</span></div>
+      <div class="key" data-key="'"><span class="kb-label">'</span><span class="note-label">D5</span></div>
+    </div>
+
+    <!-- Z row -->
+    <div class="kb-row">
+      <div class="key" data-key="z"><span class="kb-label">Z</span><span class="note-label">C3</span></div>
+      <div class="key" data-key="x"><span class="kb-label">X</span><span class="note-label">D3</span></div>
+      <div class="key" data-key="c"><span class="kb-label">C</span><span class="note-label">E3</span></div>
+      <div class="key" data-key="v"><span class="kb-label">V</span><span class="note-label">F3</span></div>
+      <div class="key" data-key="b"><span class="kb-label">B</span><span class="note-label">G3</span></div>
+      <div class="key" data-key="n"><span class="kb-label">N</span><span class="note-label">A3</span></div>
+      <div class="key" data-key="m"><span class="kb-label">M</span><span class="note-label">B3</span></div>
+      <div class="key" data-key=","><span class="kb-label">,</span><span class="note-label">C4</span></div>
+      <div class="key" data-key="."><span class="kb-label">.</span><span class="note-label">D4</span></div>
+      <div class="key" data-key="/"><span class="kb-label">/</span><span class="note-label">E4</span></div>
+    </div>
+
+    <!-- Space bar -->
+    <div class="kb-row">
+      <div class="key space" data-key=" "><span class="kb-label">SPACE</span><span class="note-label">REST</span></div>
+    </div>
+
+  </div><!-- /#keyboard-wrap -->
 
   <!-- ── Song / token display ───────────────────────────── -->
   <div id="song-display" aria-live="polite" aria-label="Song tokens"></div>
@@ -87,6 +150,10 @@
 
 </div><!-- /#app -->
 
-<script type="module" src="src/main.js"></script>
+<script src="src/keyboard.js"></script>
+<script src="src/synthesizer.js"></script>
+<script src="src/composer.js"></script>
+<script src="src/visualizer.js"></script>
+<script src="src/main.js"></script>
 </body>
 </html>

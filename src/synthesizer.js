@@ -5,11 +5,14 @@
  * an ADSR envelope, a biquad low-pass filter, an LFO for vibrato/wobble,
  * a convolution reverb, and a delay line. Parameters are driven by the
  * currently selected PRESET from keyboard.js.
+ *
+ * Depends on: keyboard.js (loaded first via <script> tag).
+ * Exposes everything on window.Astrolyzer.
  */
 
 'use strict';
 
-import { noteFreq } from './keyboard.js';
+window.Astrolyzer = window.Astrolyzer || {};
 
 let _ctx = null;
 
@@ -101,7 +104,7 @@ function playNote(noteName, preset, duration) {
   const ctx = getCtx();
   buildFxChain();           // idempotent
 
-  const freq = noteFreq(noteName);
+  const freq = window.Astrolyzer.noteFreq(noteName);
   const now  = ctx.currentTime;
 
   // Update reverb wet/dry per preset
@@ -189,4 +192,5 @@ function playNote(noteName, preset, duration) {
   return stop;
 }
 
-export { getCtx, buildFxChain, getAnalyser, setMasterVolume, playNote };
+// Expose on global namespace
+Object.assign(window.Astrolyzer, { getCtx, buildFxChain, getAnalyser, setMasterVolume, playNote });

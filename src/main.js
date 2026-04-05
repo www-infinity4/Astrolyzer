@@ -9,14 +9,20 @@
  *   • Feed tokens into the AI composer
  *   • Update UI state (active keys, token counter, composer status)
  *   • Trigger particle + starfield bursts on key-press
+ *
+ * Depends on: keyboard.js, synthesizer.js, composer.js, visualizer.js
+ *             (all loaded via <script> tags before this file).
  */
 
 'use strict';
 
-import { KEY_MAP, PRESETS, keyEntry } from './keyboard.js';
-import { playNote, setMasterVolume, buildFxChain } from './synthesizer.js';
-import { token as composerToken, reset as composerReset, onCompose, onComposerStop } from './composer.js';
-import { initStarfield, initVisualizer, starBurst, visPulse } from './visualizer.js';
+/* ── Destructure from global namespace (set by earlier scripts) ──────── */
+const {
+  KEY_MAP, PRESETS, keyEntry,
+  playNote, setMasterVolume, buildFxChain,
+  composerToken, composerReset, onCompose, onComposerStop,
+  initStarfield, initVisualizer, starBurst, visPulse,
+} = window.Astrolyzer;
 
 /* ── Boot ────────────────────────────────────────────────────────────── */
 
@@ -33,7 +39,6 @@ const heldKeys = new Set();
 const activeVoices = {};
 
 /* DOM refs */
-const presetContainer  = document.getElementById('presets');
 const tokenCountEl     = document.getElementById('token-count');
 const tokenProgressEl  = document.getElementById('token-progress');
 const tempoLabelEl     = document.getElementById('tempo-label');
@@ -45,76 +50,24 @@ const btnRecord        = document.getElementById('btn-record');
 const btnReset         = document.getElementById('btn-reset');
 const volSlider        = document.getElementById('vol-slider');
 
-/* ── Virtual keyboard layout ─────────────────────────────────────────── */
+/* ── Attach events to pre-rendered keyboard keys ────────────────────── */
 
-// Physical QWERTY rows we render (in order)
-const KB_ROWS = [
-  { id: 'row-num', keys: ['`','1','2','3','4','5','6','7','8','9','0','-','='] },
-  { id: 'row-q',   keys: ['q','w','e','r','t','y','u','i','o','p','[',']'] },
-  { id: 'row-a',   keys: ['a','s','d','f','g','h','j','k','l',";","'"] },
-  { id: 'row-z',   keys: ['z','x','c','v','b','n','m',',','.','/'] },
-];
-
-function buildKeyboard() {
-  KB_ROWS.forEach(({ id, keys }) => {
-    const row = document.getElementById(id);
-    keys.forEach(k => {
-      const entry = KEY_MAP[k];
-      const el = document.createElement('div');
-      el.className = 'key';
-      el.dataset.key = k;
-
-      const labelEl = document.createElement('span');
-      labelEl.className = 'kb-label';
-      labelEl.textContent = entry ? entry.label : k.toUpperCase();
-
-      const noteEl = document.createElement('span');
-      noteEl.className = 'note-label';
-      noteEl.textContent = entry ? entry.note : '';
-
-      el.appendChild(labelEl);
-      el.appendChild(noteEl);
-      row.appendChild(el);
-
-      // Mouse events
-      el.addEventListener('mousedown', () => triggerKey(k, el));
-      el.addEventListener('mouseup',   () => releaseKey(k));
-      el.addEventListener('mouseleave', () => releaseKey(k));
-      el.addEventListener('touchstart', e => { e.preventDefault(); triggerKey(k, el); }, { passive: false });
-      el.addEventListener('touchend',   e => { e.preventDefault(); releaseKey(k); },   { passive: false });
-    });
+function attachKeyboardEvents() {
+  document.querySelectorAll('.key[data-key]').forEach(el => {
+    const k = el.dataset.key;
+    el.addEventListener('mousedown',  () => triggerKey(k, el));
+    el.addEventListener('mouseup',    () => releaseKey(k));
+    el.addEventListener('mouseleave', () => releaseKey(k));
+    el.addEventListener('touchstart', e => { e.preventDefault(); triggerKey(k, el); }, { passive: false });
+    el.addEventListener('touchend',   e => { e.preventDefault(); releaseKey(k); },    { passive: false });
   });
-
-  // Space bar row
-  const spaceRow = document.getElementById('row-space');
-  const spaceEl  = document.createElement('div');
-  spaceEl.className   = 'key space';
-  spaceEl.dataset.key = ' ';
-  const spaceLabel = document.createElement('span');
-  spaceLabel.className   = 'kb-label';
-  spaceLabel.textContent = 'SPACE';
-  const spaceNote = document.createElement('span');
-  spaceNote.className   = 'note-label';
-  spaceNote.textContent = 'REST';
-  spaceEl.appendChild(spaceLabel);
-  spaceEl.appendChild(spaceNote);
-  spaceRow.appendChild(spaceEl);
-  spaceEl.addEventListener('mousedown', () => triggerKey(' ', spaceEl));
-  spaceEl.addEventListener('mouseup',   () => releaseKey(' '));
-  spaceEl.addEventListener('mouseleave', () => releaseKey(' '));
 }
 
-/* ── Preset buttons ──────────────────────────────────────────────────── */
+/* ── Attach events to pre-rendered preset buttons ────────────────────── */
 
-function buildPresets() {
-  PRESETS.forEach((preset, i) => {
-    const btn = document.createElement('button');
-    btn.className   = `preset-btn${i === activePreset ? ' selected' : ''}`;
-    btn.dataset.idx = i;
-    btn.textContent = `${i + 1}  ${preset.name}`;
-    btn.style.setProperty('--preset-color', preset.color);
-    btn.addEventListener('click', () => selectPreset(i));
-    presetContainer.appendChild(btn);
+function attachPresetEvents() {
+  document.querySelectorAll('.preset-btn[data-idx]').forEach(btn => {
+    btn.addEventListener('click', () => selectPreset(parseInt(btn.dataset.idx, 10)));
   });
 }
 
@@ -255,11 +208,8 @@ document.addEventListener('keyup', e => {
 /* ── Control buttons ─────────────────────────────────────────────────── */
 
 btnCompose.addEventListener('click', () => {
-  // Force compose immediately
-  import('./composer.js').then(({ token: t }) => {
-    // trigger a fake extra token to push the composer over the threshold
-    t('A4');
-  });
+  // Force compose immediately by adding a token to push over the threshold
+  composerToken('A4');
 });
 
 btnRecord.addEventListener('click', () => {
@@ -333,7 +283,7 @@ function hexToRgb(hex) {
 
 /* ── Initialise ──────────────────────────────────────────────────────── */
 
-buildPresets();
-buildKeyboard();
+attachPresetEvents();
+attachKeyboardEvents();
 initStarfield(document.getElementById('starfield'));
 initVisualizer(document.getElementById('visualizer'));
